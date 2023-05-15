@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat with GPT</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        font-family: Arial, sans-serif;
+        background-color: #f7f8fa;
+      }
+      #chatbox {
+        width: 600px;
+        height: 400px;
+        border: solid 1px #e0e0e0;
+        border-radius: 10px;
+        padding: 20px;
+        overflow: auto;
+        white-space: pre-wrap;
+        background-color: white;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+      }
+      #inputbox {
+        width: 600px;
+        height: 40px;
+        margin-top: 20px;
+        padding: 10px;
+        border: solid 1px #e0e0e0;
+        border-radius: 10px;
+        font-size: 16px;
+      }
+      p {
+        line-height: 1.5;
+      }
+      p b {
+        color: #4f4f4f;
+      }
+      p#waiting {
+        color: #828282;
+        display: none;
+      }
+      .logo-container {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .logo-container img {
+        width: 100px;
+        margin: 0 10px;
+      }
+      footer {
+        text-align: center;
+        font-size: 12px;
+        color: #666;
+        margin-top: 20px;
+      }
+      .tab {
+        white-space: pre;
+      }
+    </style>
+  </head>
+  <body>
+    <footer>
+      Resource is strictly limited by openAI: 3 questions per min.
+    </footer>
+    <footer>Please be responsible for your usage.(●'◡'●)</footer>
+    <br />
+    <br />
+    <div id="chatbox"></div>
+    <input
+      id="inputbox"
+      type="text"
+      placeholder="Type your question here..."
+      onkeydown="if (event.key == 'Enter') askQuestion()"
+    />
+    <p id="waiting">Waiting for response...</p>
+    <!-- <footer>Made by Kingsley Leung</footer> -->
+    <footer>
+      @programme of geo-spatial information engineering, smart cities
+    </footer>
+    <footer>@college of architecture & urban planning</footer>
+
+    <!-- <footer>Concat: <a href="https://mail.google.com/">kingsleyl0107@gmail.com<a></footer> -->
+
+    <script>
+      var static_url = "{{ url_for('static', filename='m.png') }}";
+      function askQuestion() {
+        let inputbox = document.getElementById("inputbox");
+        let chatbox = document.getElementById("chatbox");
+        let question = inputbox.value;
+        inputbox.value = "";
+        chatbox.innerHTML += "<p><b>You:</b> " + question + "</p>";
+        let waiting = document.getElementById("waiting");
+        waiting.style.display = "block";
+        fetch("/query?q=" + encodeURIComponent(question))
+          .then((response) => response.text())
+          .then((answer) => {
+            waiting.style.display = "none";
+            chatbox.innerHTML +=
+              '<img src="' +
+              static_url +
+              '" alt="GPT Icon" style="width:20px; height:20px;">' +
+              '<span class="tab">&#09;</span>' +
+              answer;
+            chatbox.scrollTop = chatbox.scrollHeight;
+          });
+      }
+      window.onload = function () {
+        let chatbox = document.getElementById("chatbox");
+        chatbox.innerHTML +=
+          '<img src="' +
+          static_url +
+          '" alt="GPT Icon" style="width:20px; height:20px;">' +
+          '<span class="tab">&#09;</span>' +
+          "(●'◡'●)你好呀,欢迎来找我玩";
+      };
+    </script>
+  </body>
+</html>
